@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
+from .models import recipes_info
 
 def home(request):
     return render(request, 'home.html')
@@ -59,3 +60,8 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect('home')
+
+def all_recipes(request):
+    Name = recipes_info.objects.all
+    return render(request, 'recipes_names.html', 
+    {'Name': Name})
