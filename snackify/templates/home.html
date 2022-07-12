@@ -1,72 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'header.html' %}
+  {% block title %} Snackify | Home {% endblock title %} 
+  {% block content %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <title>Login System</title>
-</head>
+    	{% load static %}
 
-<body>
+      <div class="hero-image">
+        <div class="hero-text">
+          <h1 style="font-size:50px">Find a recipe!</h1>
+          <form class="form-inline my-2 my-lg-0 d-flex flex-row" action="{% url 'search' %}" method="get">
+            <input type="search" name = 'search' placeholder="Search..." />
+            <button class="btn btn-outline-success" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </form>
+        </div>
+      </div>
 
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
+ 		<!--Recipes-->
+      <div class="">
+        <br>
+        <hr>
+        <center><h2>Top Rated Recipes</h2>
+	    	<hr>
+	    	<br>
+      </div>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="home">Login System</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="home">HOME<span class="sr-only">(current)</span></a>
-        </li>
-        {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link" href="#">Hi, {{user.first_name}}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="logout">LOGOUT</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="register">SIGN UP</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="login">LOGIN</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-  </nav>
+      <div class="card-deck" style="z-index:0;">
+          {% if d %}  
+          {% for i in d %}
+          <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+            <div class="card" style="height: 27rem">
+              <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+              <div class="card-body">
+                  <h5 class="card-title">{{i.Name}}</h5>
+                  <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+                  <hr>
+                  <p class="card-text text-truncate">{{i.Description}}</p>
+                  
+                  <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+                  <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+              </div>
+            </div>
+          </div>
+            {% endfor %}
+            {% endif %}          
+      </div>
 
-  <div class="container my-3">
-    <h1 style="text-align:center;">Welcome to Python Guides</h1>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <h3 style="text-align:center;">Thanks for landing on this page to know more about PythonGuides.com.</h3>
-      <br>
-      <h6>I welcome you to the website and hopefully, you got to learn something in Python. I started this website to
-        share my finding and learnings in Python with you.</h6>
-      <h6>To keep things simple, I am trying to write a lot of articles on Python. Feel free to give your valuable
-        comments and also share the articles if you are liking and hoping it will be helpful to someone.</h6>
-      <br>
-      <h2 style="text-align:center;">Also, Subscribe to Our YouTube Channel for FREE Python Video Tutorials.</h2>
-    </div>
-</body>
-
-</html>
+  {% endblock %}

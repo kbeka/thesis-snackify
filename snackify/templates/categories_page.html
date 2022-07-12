@@ -1,0 +1,20 @@
+{% extends 'header.html' %}
+{% block title %} Snackify | Categories {% endblock title %}
+{% block content %}
+
+<div class ="main">
+    <div class="card-deck">
+      {% if categories.any %}
+        {% for i in categories%}
+        <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+            <div class="card" id="res">
+                <div class="card-body">
+                    <a class="card-text" href = "{% url 'category_recipes' i %}" id="link">{{i}}</a>
+                </div>
+            </div>
+        </div>
+        {% endfor%}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

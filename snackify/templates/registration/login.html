@@ -1,20 +1,52 @@
 <!doctype html>
 <html lang="en">
-
+{% load static %}
 <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset ="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static '/favicon.ico' %}" type="image/x-icon" />
+    <link href="{% static '/css/login.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>LOGIN</title>
+    <title>Snackify | Login</title>
 </head>
 
 <body>
-    <div class="mx-auto" style="width: 500px" ;>
+    <div class="box">
+        <!-- <div class="">
+          <center><img src="{% static 'bg.jpg' %}" alt="logo" style="width:270px"></center>
+        </div> -->
+        <h1 align="center" style="font-family: Raleway"><b>Welcome!</b></h1>
+
+        <form action="/accounts/login/" method="post">
+            {% csrf_token%}
+            <input type="text" id="username" name="username" placeholder="Enter your username" style="font-family: Raleway"  required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" style="font-family: Raleway" required>
+            <button type="submit">Login</button>
+            <p>Not a member? <a href="/accounts/register/" role="button" style="color: white">Sign up</a></p>
+            <div class="form-group">
+                {% for message in messages %}
+                <div class="alert alert-danger" role="alert">
+                    {{message}}
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+        <!-- <script>
+            String error = request.getParameter("error");
+            if(error!=null){
+                out.print("<center style=\"color:red;\">"+request.getParameter("error")+"</center>");
+            }
+        </script> -->
+    </div>
+    <!-- <div class="mx-auto" style="width: 500px" ;>
         <form action="/accounts/login/" method="post" class="form-horizontal">
             {% csrf_token%}
             <div class="col-xs-8 col-xs-offset-4">
@@ -30,6 +62,7 @@
                 <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password">
             </div>
             <button type="submit" class="btn btn-primary">LOGIN</button>
+			<a class="btn btn-dark" href="/accounts/register/" role="button">SIGNUP</a>
             <br />
             <div class="form-group">
                 {% for message in messages %}
@@ -38,7 +71,7 @@
                 </div>
                 {% endfor %}
             </div>
-        </form>
+        </form> -->
 
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -1,0 +1,12 @@
+.lnk a{
+    color: grey;
+    text-decoration: none;
+}
+
+.lnk a:hover {
+    text-decoration: underline;
+    color: grey;
+    text-decoration-color: grey;
+    background-color: transparent;
+    text-decoration-style: double;
+}

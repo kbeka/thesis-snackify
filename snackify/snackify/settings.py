@@ -126,10 +126,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'snackify/static') # Directory where uploaded media is saved.
+MEDIA_URL = '/media/' # Public URL at the browser
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'snackify/static')
+    os.path.join(BASE_DIR, 'snackify/static'),
 ]
 
 # Default primary key field type
