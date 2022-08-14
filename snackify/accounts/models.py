@@ -70,7 +70,7 @@ class interactions(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-	    return self.user
+	    return self.review
 
 class profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)

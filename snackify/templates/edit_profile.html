@@ -1,10 +1,89 @@
 {% extends 'header.html' %}
 {% block title %} Snackify | Edit Profile {% endblock title %} 
 {% block content %}
-    <div class="row my-3 p-3">
-        <img class="rounded-circle account-img" src="{{ user.profile.image }} " style="cursor: pointer;"/>
+
+<div class="container" id="edit">
+
+    <div class="row justify-content-around">
+
+        {% if user_form.errors %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <div id="form_errors">
+                {% for key, value in user_form.errors.items %}
+                    <strong>{{ value }}</strong>
+                {% endfor %}
+            </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+
+        <div class="form-content justify-content-between">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="col-3">
+                        <div class="">
+                            <div class="form-group">
+                                <br>
+                                <div class=""> Username: {{ form.username }}</div>
+                                <br>
+                                <div class="">Email: {{ form.email }}</div>
+                                <br>
+                                <div class="">First Name: {{ form.first_name }}</div>
+                                <br>
+                                <div class="">Last Name: {{ form.last_name }}</div>
+                            
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-2">
+
+                    </div>
+
+                    <div class="col-3 my-5">
+                        <img class="account-img" id="prof" src="/static/{{ user.profile.image }} " style="cursor: pointer;"/>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="">
+                            <div class="form-group">
+                                <!-- <br> -->
+                                <hr>
+                                <a class="form-control link-dark" style="border:none" href="{% url 'password_change' user.username%}">Change Password</a>
+                                <hr>
+                                <div class="">Change Image: {{ profile_form.image }}</div>
+                                <br>
+                                <div class="">Change City: {{ profile_form.city }}</div>
+                                <br>
+                                <div class="">Change Birthday: {{ profile_form.birthday }}</div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <div class="">
+                        <button type="submit" class="btn btn-dark">Save Changes</button>
+                        <button type="reset" class="btn btn-dark">Reset</button>
+                    </div>
+                    
+                    <div class="">
+                        <a href="{% url 'profile_info' user.username %}" class="btn btn-outline-dark">Return to profile</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
     </div>
-    {% if user_form.errors %}
+
+    <hr>
+    <hr>
+    <!-- {% if user_form.errors %}
         <div class="alert alert-danger alert-dismissible" role="alert">
             <div id="form_errors">
                 {% for key, value in user_form.errors.items %}
@@ -49,4 +128,6 @@
         </form>
     </div>
     <a href="{% url 'profile_info' user.username %}" class="btn btn-outline-secondary">Return to profile</a>
+</div> -->
+
 {% endblock content %}
