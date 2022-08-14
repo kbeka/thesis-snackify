@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import recipes_info,reviews,profile, interactions
 from .forms import *
 from django.template import loader
@@ -15,13 +16,19 @@ import pandas as pd
 import numpy as np
 import json
 import itertools
+import random
 
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
 
-def home(request):
+from surprise import BaselineOnly
+from surprise import Dataset, accuracy, Reader
+
+def top_recipes(request):
     recipes_home = pd.DataFrame(list(recipes_info.objects.all().values()))
     reviews_home = pd.DataFrame(list(reviews.objects.all().values()))
 
@@ -59,7 +66,7 @@ def home(request):
 
     #Sort best meals based on their scores
     top_meals=top_meals.sort_values('Score',ascending=False)
-    top_meals = top_meals[top_meals.Score > 4.7]
+    top_meals = top_meals[top_meals.Score > 4.68]
     top_meals.Images = top_meals.Images.str[2:-2]
     top_meals.Images = top_meals.Images.str.split("'").str[0]
     
@@ -68,6 +75,11 @@ def home(request):
     data = []
     data = json.loads(json_records)
     context = {'d': data}
+
+    return(context)
+
+def home(request):
+    context = top_recipes(request)
 
     return render(request, 'home.html', context)
 
@@ -80,6 +92,7 @@ def recipe_page(request, RecipeId):
     our_reviews = interactions.objects.filter(RecipeId = recipe_data).exclude(review__isnull=True).exclude(user=request.user)
     our_reviews = our_reviews.order_by('-date')
 
+    
     #user's review
     user_review = interactions.objects.filter(user=request.user).filter(RecipeId = recipe_data).exclude(review__isnull=True).first()
 
@@ -331,16 +344,34 @@ def change_password(request, username):
 ### CATEGORIES ###
 
 def categories_page(request):
+    if request.method == "POST":
+        category = request.POST.get('categ')
+        return category_recipes(request, category)
     categories = pd.DataFrame(list(recipes_info.objects.all().values()))
     categ = categories.RecipeCategory.unique()
     categ = np.sort(categ)
+    # categ = pd.DataFrame(categ, columns=['categories'])
 
-    return render(request, 'categories_page.html', {'categories': categ})
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(categ, 20)
+    page_range = paginator.get_elided_page_range(number=page)
+
+    try:
+        category = paginator.page(page)
+    except PageNotAnInteger:
+        category = paginator.page(1)
+    except EmptyPage:
+        category = paginator.page(paginator.num_pages)
+
+    return render(request, 'categories_page.html', {'category': category, 'categories': categ, 'page_range': page_range})
 
 def category_recipes(request, category):
     rec_cat = recipes_info.objects.filter(RecipeCategory = category)
     recipes = pd.DataFrame(list(rec_cat.all().values()))
     
+    num_of_recipes = recipes.shape[0]
+
     recipes.Images = recipes.Images.str[2:-2]
     recipes.Images = recipes.Images.str.split("'").str[0]
 
@@ -348,8 +379,18 @@ def category_recipes(request, category):
     data = []
     recipes_data = json.loads(json_records)
 
+    page = request.GET.get('page', 1)
+    paginator = Paginator(recipes_data, 20)
+    page_range = paginator.get_elided_page_range(number=page)
 
-    return render(request, 'category_recipes.html', {'recipes': recipes_data})
+    try:
+        recipes_data = paginator.page(page)
+    except PageNotAnInteger:
+        recipes_data = paginator.page(1)
+    except EmptyPage:
+        recipes_data = paginator.page(paginator.num_pages)
+    
+    return render(request, 'category_recipes.html', {'recipes': recipes_data, 'num_of_recipes': num_of_recipes, 'page_range': page_range})
     
 ### END CATEGORIES ###
 
@@ -358,50 +399,27 @@ def category_recipes(request, category):
 def nutrition_page(request):
     recipes = pd.DataFrame(list(recipes_info.objects.all().values()))
 
-    df = recipes.copy()
-
-    df['food types'] = np.nan
-    df['food types'] = df['food types'].astype('str')
-
-
-    for i in df.index:
-        if(20<df['Calories'][i]<300):
-            df.loc[df.index == i, df['food types']]='Healthy'
-        elif(df['Calories'][i]>300):
-            df.loc[df.index == i, df['food types']]='Unhealthy'
-
-    healthy = df[df['food types'] == 'Healthy'].head(4)
-    unhealthy = df[df['food types'] == 'Unhealthy'].head(4)
-
-    healthy.Images = healthy.Images.str[2:-2]
-    healthy.Images = healthy.Images.str.split("'").str[0]
-
-    json_records = healthy.reset_index().to_json(orient ='records')
-    data = []
-    recipes_healthy = json.loads(json_records)
-
-    unhealthy.Images = unhealthy.Images.str[2:-2]
-    unhealthy.Images = unhealthy.Images.str.split("'").str[0]
-
-    json_records = unhealthy.reset_index().to_json(orient ='records')
-    data = []
-    recipes_unhealthy = json.loads(json_records)
-
-    return render(request, 'nutrition_page.html', {'healthy': recipes_healthy, 'unhealthy': recipes_unhealthy})
+   
+    return render(request, 'nutrition_page.html')
 
 def nutrition_recipes(request):
     message = True
     recipes_data = False
 
     if request.method == 'GET':
-        recipe = request.GET.get('nutrition')
-    if recipe == '':
-        recipe = 'None'
+        recipe = request.GET.get('nutr')
+    # if recipe == '':
+    #     recipe = 'None'
 
     if(recipe == 'None'):
         message = False
     else:
         recipes = pd.DataFrame(list(recipes_info.objects.all().values()))
+        recipes = recipes.drop_duplicates(subset=['Name'])
+
+        if(recipe not in recipes.Name.values):
+            message = False
+            return render(request, 'nutrition_recipes.html', {'recipes': recipes_data, 'message': message, 'recipe': recipe})
 
         nutrition = recipes[['Name', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent', 
                         'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent']]
@@ -412,11 +430,18 @@ def nutrition_recipes(request):
         results = predict(cal, recipe)
         
         if(bool(results)):
-            
-            data = pd.DataFrame(list(recipes_info.objects.filter(Q(Name__in = results)).values()))
-            
+            # print(results)
+            recipes = pd.DataFrame(list(recipes_info.objects.all().values()))
+            data = pd.DataFrame(columns = list(recipes.columns.values))
+
+            for i in results:
+                new = recipes.loc[recipes['Name'] == i]
+                print(new)
+                data = pd.concat([data, new])
+                
             data.Images = data.Images.str[2:-2]
             data.Images = data.Images.str.split("'").str[0]
+            
 
             json_records = data.reset_index().to_json(orient ='records')
             data = []
@@ -424,11 +449,24 @@ def nutrition_recipes(request):
         else:
             message = False
         
+        num_of_recipes = len(results)
 
-    return render(request, 'nutrition_recipes.html', {'recipes': recipes_data, 'message': message, 'recipe': recipe})
+        page = request.GET.get('page', 1)
+        paginator = Paginator(recipes_data, 20)
+        page_range = paginator.get_elided_page_range(number=page)
+
+        try:
+            recipes_data = paginator.page(page)
+        except PageNotAnInteger:
+            recipes_data = paginator.page(1)
+        except EmptyPage:
+            recipes_data = paginator.page(paginator.num_pages)
+       
+
+    return render(request, 'nutrition_recipes.html', {'recipes': recipes_data, 'page_range': page_range, 'num_of_recipes': num_of_recipes, 'message': message, 'recipe': recipe})
 
 
-def predict(cal, recipe_name, correl = 0.999, recipe_number = 20):
+def predict(cal, recipe_name, correl = 0.999, recipe_number = 201):
     nutrition_recipe = cal[recipe_name]
     
 #   find similar recipes
@@ -439,7 +477,7 @@ def predict(cal, recipe_name, correl = 0.999, recipe_number = 20):
     
     # sort by correlation
     corr = corr.sort_values('Correlation', ascending=False)
-    return(corr.iloc[0:recipe_number, :].index.to_list())
+    return(corr.iloc[1:recipe_number, :].index.to_list())
 
 ### END SEARCH OPTIONS ###
 
@@ -447,6 +485,8 @@ def predict(cal, recipe_name, correl = 0.999, recipe_number = 20):
 
 def ingredient_recipes(request, ingredients):
     recipes = pd.DataFrame(list(recipes_info.objects.all().values()))
+
+    
 
     if request.method == 'GET':
         ingredient = request.GET.get('ingredients')
@@ -463,11 +503,27 @@ def ingredient_recipes(request, ingredients):
     data.Images = data.Images.str[2:-2]
     data.Images = data.Images.str.split("'").str[0]
 
+    # num_of_recipes = np.shape(data)
+    num_of_recipes = len(data)
+
     json_records = data.reset_index().to_json(orient ='records')
     data = []
     recipes_data = json.loads(json_records)
 
-    return render(request, 'ingredient_recipes.html', {'recipes': recipes_data, 'ingredient': ingredients})
+    page = request.GET.get('page', 1)
+    paginator = Paginator(recipes_data, 20)
+    page_range = paginator.get_elided_page_range(number=page)
+
+    try:
+        recipes_data = paginator.page(page)
+    except PageNotAnInteger:
+        recipes_data = paginator.page(1)
+    except EmptyPage:
+        recipes_data = paginator.page(paginator.num_pages)
+    
+    
+
+    return render(request, 'ingredient_recipes.html', {'recipes': recipes_data, 'num_of_recipes': num_of_recipes, 'ingredient': ingredients, 'page_range': page_range})
 
 def score_recipes(user_input, df):
     '''
@@ -538,10 +594,14 @@ def ingredients_page(request):
 ### SEARCH BY NAME OR CATEGORY ###
 
 def search(request):
+    search_request = 'None'
     if request.method == 'GET':
         search_request = request.GET.get('search')
         if search_request == '':
             search_request = 'None'
+            message = False
+            return render(request, 'search_results.html', { 'message': message, 'search_request': search_request})
+            
 
     recipes_name = pd.DataFrame(list(recipes_info.objects.filter(Q(Name__contains = search_request)).values()))
     recipes_category = pd.DataFrame(list(recipes_info.objects.filter(Q(RecipeCategory__contains = search_request)).values()))
@@ -566,10 +626,11 @@ def search(request):
         message = False
 
 
-    return render(request, 'search_results.html', {'recipes_name': recipes_name_data, 'recipes_category': recipes_category_data, 'message': message})
+    return render(request, 'search_results.html', {'recipes_name': recipes_name_data, 'recipes_category': recipes_category_data, 'message': message, 'search_request': search_request})
 
 
 ### END SEARCH BY NAME OR CATEGORY ###
+
 
 def cookbook(request, username):
     user_prof = profile.objects.get(user_id = request.user)
@@ -597,8 +658,127 @@ def favorite(request, username):
 
     return render(request, 'favorite.html', {'user_prof':user_prof, 'user_favorite': favorite})
 
+def recipes_other_user(request, username):
+    user_prof = profile.objects.get(user_id = request.user)
+    
+    user_favorite = pd.DataFrame(list(user_prof.favorite.all().values()))
+    user_favorite.Images = user_favorite.Images.str[2:-2]
+    user_favorite.Images = user_favorite.Images.str.split("'").str[0]
+
+    json_records = user_favorite.reset_index().to_json(orient ='records')
+    data = []
+    favorite = json.loads(json_records)
+
+    return render(request, 'recipes_other_user.html', {'user_prof':user_prof, 'recipes': recipes_other_user})
+
 def about_us(request):
     return render(request, 'about_us.html')
+
+def volume_conv(request):
+    return render(request, 'volume_conv.html')
+
+def length_conv(request):
+    return render(request, 'length_conv.html')
+
+def temperature_conv(request):
+    return render(request, 'temperature_conv.html')
+
+def other_profile_info(request, AuthorName):
+
+    user_prof = False
+    cookbook = False
+    favorite = False
+    user_name = AuthorName
+    user_reviews2 = False
+
+    if User.objects.filter(username=AuthorName).exists():
+        
+        user_id = User.objects.get(username = AuthorName).pk
+        if(AuthorName == request.user):
+            return profile(request, AuthorName)
+        user_prof = profile.objects.get(user_id = user_id)
+        user_reviews2 = interactions.objects.filter(user = user_id).exclude(review__isnull = True)
+        
+        user_cookbook = pd.DataFrame(list(user_prof.cookbook.all().values()))
+        if(user_cookbook.empty == False):
+            user_cookbook.Images = user_cookbook.Images.str[2:-2]
+            user_cookbook.Images = user_cookbook.Images.str.split("'").str[0]
+
+        if(len(user_cookbook)>3):
+            user_cookbook = user_cookbook.head(3)
+
+        json_records = user_cookbook.reset_index().to_json(orient ='records')
+        data = []
+        cookbook = json.loads(json_records)
+
+        user_favorite = pd.DataFrame(list(user_prof.favorite.all().values()))
+        if(user_favorite.empty == False):
+            user_favorite.Images = user_favorite.Images.str[2:-2]
+            user_favorite.Images = user_favorite.Images.str.split("'").str[0]
+
+        if(len(user_favorite)>3):
+            user_favorite = user_favorite.head(3)
+
+        json_records = user_favorite.reset_index().to_json(orient ='records')
+        data = []
+        favorite = json.loads(json_records)
+
+    recipes_user = pd.DataFrame(list(recipes_info.objects.filter(AuthorName = AuthorName).values()))
+    recipes_user_data = False
+
+    if(not recipes_user.empty):
+        recipes_user.Images = recipes_user.Images.str[2:-2]
+        recipes_user.Images = recipes_user.Images.str.split("'").str[0]
+
+        if(len(recipes_user)>3):
+            recipes_user = recipes_user.head(3)
+
+        json_records = recipes_user.reset_index().to_json(orient ='records')
+        data = []
+        recipes_user_data = json.loads(json_records)
+
+    user_reviews1 = reviews.objects.filter(AuthorName = AuthorName)
+    
+    
+
+    return render(request, 'other_profile.html', {'user_prof':user_prof, 'user_cookbook': cookbook, 'user_favorite': favorite,
+    'user_reviews1': user_reviews1, 'user_reviews2': user_reviews2, 'user_name': user_name, 'recipes': recipes_user_data})
+
+    return render(request, 'other_profile.html')
+
+def more_recipes(request, AuthorName):
+    if User.objects.filter(username=AuthorName).exists():
+        return 
+    recipes_user = pd.DataFrame(list(recipes_info.objects.filter(AuthorName = AuthorName).values()))
+    recipes_user_data = False
+
+    if(not recipes_user.empty):
+        recipes_user.Images = recipes_user.Images.str[2:-2]
+        recipes_user.Images = recipes_user.Images.str.split("'").str[0]
+
+        json_records = recipes_user.reset_index().to_json(orient ='records')
+        data = []
+        recipes_user_data = json.loads(json_records)
+
+    return render(request, 'recipes_other_user.html', {'recipes': recipes_user_data, 'username': AuthorName})
+
+def more_favorite(request, AuthorName):
+    if User.objects.filter(username=AuthorName).exists():
+        user_id = User.objects.get(username = AuthorName).pk
+        user_prof = profile.objects.get(user_id = user_id)
+        
+        user_favorite = pd.DataFrame(list(user_prof.favorite.all().values()))
+        user_favorite.Images = user_favorite.Images.str[2:-2]
+        user_favorite.Images = user_favorite.Images.str.split("'").str[0]
+
+        json_records = user_favorite.reset_index().to_json(orient ='records')
+        data = []
+        favorite = json.loads(json_records)
+
+        return render(request, 'favorite.html', {'user_prof':user_prof, 'user_favorite': favorite})
+    else:
+        return
+    
 
 def register(request):
     if request.method == 'POST':
@@ -659,3 +839,146 @@ def all_recipes(request):
     Name = recipes_info.objects.all
     return render(request, 'recipes.html', 
     {'Name': Name})
+
+
+def recommedation_system(request):
+
+    ### CONTENT-BASED
+
+    recommendations = False
+    name = False
+    message = False
+    recipe_name = False
+    user_prof = profile.objects.get(user = request.user)
+    cos_sim_res= []
+    recipes = pd.DataFrame(list(recipes_info.objects.all().values()))
+
+    user_favorite = pd.DataFrame(list(user_prof.favorite.all().values()))
+    if(user_favorite.empty == False):
+        df_len = len(user_favorite)
+        recipes_name = []
+        for i in range(df_len):
+            recipes_name.append(user_favorite['Name'][i])
+
+        df_recipes = pd.read_csv(r'C:\Users\alkis\OneDrive\Υπολογιστής\ΤΗΜΜΥ\ΔΙΠΛΩΜΑΤΙΚΗ\csv\content_based.csv')
+
+        cv = CountVectorizer(analyzer='word',strip_accents='unicode',stop_words='english')
+        count_matrix = cv.fit_transform(df_recipes['total_parsed'])
+
+        cosine_sim = cosine_similarity(count_matrix,count_matrix)
+
+        df_recipes.reset_index(inplace=True,drop=True)
+
+        
+
+        def get_id_from_index(index):
+            return df_recipes[df_recipes.index == index]["RecipeId"].values[0]
+
+        
+
+        for recipe_name in recipes_name:
+
+            recipe_index = df_recipes[df_recipes['Name'] == recipe_name].index.values[0]
+
+            similar_recipes = list(enumerate(cosine_sim[recipe_index]))
+
+            sorted_similar_recipe = sorted(similar_recipes, key=lambda x:x[1], reverse=True)
+
+            j = 0
+            for i in sorted_similar_recipe[1:]:
+                cos_sim_res.append(get_id_from_index(i[0]))
+                j = j+1
+                if j >20:
+                    break
+
+    ### COLLABORATIVE FILTERING
+
+    df1 = pd.DataFrame(list(reviews.objects.all().values()))
+    df2 = pd.DataFrame(list(interactions.objects.all().values()))
+    df2 = df2.dropna(axis=0,subset=['rating'])
+
+    df1 = df1[['AuthorId', 'RecipeId_id', 'Rating']]
+    df1 = df1.rename(columns = {'AuthorId': 'UserId', 'RecipeId_id': 'RecipeId'})
+
+    df2 = df2[['user_id', 'RecipeId_id', 'rating']]
+    df2 = df2.rename(columns = {'user_id': 'UserId', 'rating': 'Rating', 'RecipeId_id': 'RecipeId'})
+
+    df_colab = pd.concat([df1,df2])
+
+    #To reduce the dimensionality of the data set avoiding any "memory error", rarely rated repices and rarely rating users will be removed.
+
+    min_recipe_ratings = 20
+    filter_recipes = df_colab['RecipeId'].value_counts() > min_recipe_ratings
+    filter_recipes = filter_recipes[filter_recipes].index.tolist()
+
+    min_user_ratings = 1
+    filter_users = df_colab['UserId'].value_counts() > min_user_ratings
+    filter_users = filter_users[filter_users].index.tolist()
+
+    df_new = df_colab[(df_colab['RecipeId'].isin(filter_recipes)) & (df_colab['UserId'].isin(filter_users))]
+
+    if(request.user.id in df_new['UserId'].values):
+        reader = Reader()
+        data = Dataset.load_from_df(df_new[['UserId', 'RecipeId', 'Rating']], reader)
+
+        bsl_options = {'method': 'als',
+                'n_epochs': 5,
+                'reg_u': 12,
+                'reg_i': 5
+                }
+        algo = BaselineOnly(bsl_options=bsl_options)
+        trainset = data.build_full_trainset()
+        algo.fit(trainset)
+
+        def recipes_to_predict(user_id, df_new):
+            # get the list of the recipe ids
+            unique_ids = df_new['RecipeId'].unique()
+
+            # get the list of the ids that the userid has watched
+            iids1001 = df_new.loc[df_new['UserId']==user_id, 'RecipeId']
+
+            # remove the rated movies for the recommendations
+            predict_recipes = np.setdiff1d(unique_ids,iids1001)
+            
+            return predict_recipes
+
+        def get_recommendations(user_id, df_new, my_recs, thres = 4.8):
+            recipes = recipes_to_predict(user_id, df_new)
+            
+            for iid in recipes:
+                estimation = algo.predict(uid=user_id ,iid=iid).est
+                print(estimation)
+                if estimation >= thres :
+                    my_recs.append(iid)
+    
+            return my_recs
+
+        cos_sim_res = get_recommendations(request.user.id, df_new, cos_sim_res)
+
+        if(len(cos_sim_res)<20):
+            cos_sim_res = random.sample(cos_sim_res, len(cos_sim_res))
+        else:
+            cos_sim_res = random.sample(cos_sim_res, 20)
+    else:
+        if(len(cos_sim_res)<20):
+            cos_sim_res = random.sample(cos_sim_res, len(cos_sim_res))
+        else:
+            cos_sim_res = random.sample(cos_sim_res, 20)
+
+    if(len(cos_sim_res) == 0):
+        recommendations = top_recipes(request)
+        return render(request, 'recipes.html', {'recommendations': recommendations, 'name': recipe_name, 'message': True})
+
+    recommendations_df = recipes[recipes['RecipeId'].isin(cos_sim_res)]
+
+    recommendations_df.Images = recommendations_df.Images.str[2:-2]
+    recommendations_df.Images = recommendations_df.Images.str.split("'").str[0]
+
+    json_records = recommendations_df.reset_index().to_json(orient ='records')
+    data = []
+    recommendations = json.loads(json_records)
+
+    return render(request, 'recipes.html', {'recommendations': recommendations, 'name': recipe_name, 'message': True})
+
+
+    

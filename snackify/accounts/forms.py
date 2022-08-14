@@ -35,11 +35,10 @@ class UpdateUserForm(forms.ModelForm):
 
 
 class UpdateProfileForm(forms.ModelForm):
-    birthday = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}), required=False)
-    image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}), required=False)
+    birthday = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}), required=False)
+    image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control', 'type': 'file', 'id': 'formFile'}), required=False)
     city = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
      
     class Meta:
         model = profile
         fields = ['birthday', 'image', 'city']
-

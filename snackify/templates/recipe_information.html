@@ -45,8 +45,8 @@
       <div class="col-8">
         <div class="card" id="right">
           <div class="card-header d-flex justify-content-between ">
-            <div class="text-muted"> -by {{recipe.AuthorName}}</div>
-            <div class="text-muted">{{recipe.RecipeCategory}}</div>
+            <a class="text-muted link-secondary" href="{% url 'other_profile_info' recipe.AuthorName %}"> -by {{recipe.AuthorName}}</a>
+            <a class="text-muted link-secondary" href="{% url 'category_recipes' recipe.RecipeCategory %}">{{recipe.RecipeCategory}}</a>
           </div>
           <hr>
           <div class="card-header d-flex justify-content-between">
@@ -82,14 +82,14 @@
         </div>
         <div class="modal-body">
           <p>Calories: {{recipe.Calories}}</p>
-          <p>Fat Content: {{recipe.FatContent}}</p>
-          <p>Saturated Fat Content: {{recipe.SaturatedFatContent}}</p>
-          <p>Cholesterol Content: {{recipe.CholesterolContent}}</p>
-          <p>Sodium Content: {{recipe.SodiumContent}}</p>
-          <p> Carbohydrate Content: {{recipe.CarbohydrateContent}}</p>
-          <p> Fiber Content: {{recipe.FiberContent}}</p>
-          <p> Sugar Content: {{recipe.SugarContent}}</p>
-          <p> Protein Content: {{recipe.ProteinContent}}</p>
+          <p>Fat Content: {{recipe.FatContent}} g</p>
+          <p>Saturated Fat Content: {{recipe.SaturatedFatContent}} g</p>
+          <p>Cholesterol Content: {{recipe.CholesterolContent}} mg</p>
+          <p>Sodium Content: {{recipe.SodiumContent}} mg</p>
+          <p> Carbohydrate Content: {{recipe.CarbohydrateContent}} g</p>
+          <p> Fiber Content: {{recipe.FiberContent}} g</p>
+          <p> Sugar Content: {{recipe.SugarContent}} g</p>
+          <p> Protein Content: {{recipe.ProteinContent}} g</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -98,6 +98,8 @@
     </div>
   </div>
   
+  <br>
+
   <div class="card-deck">
     {% if recipe %}
 
@@ -121,7 +123,7 @@
       </div>
     </div>
 
-    <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+    <div class="col-sm-12 col-md-6 col-lg-4 pb-4">
       <div class="card" id="res">
         <div class="card-body">
           <h5> Instructions </h5>
@@ -222,7 +224,7 @@
 
     <div class="card" id="reviews">
       <div class="card-header d-flex justify-content-between">
-        <div class="text-muted"> {{user_review.user.username}}</div>
+        <a class="text-muted" href="{% url 'profile_info' user.username %}"> {{user_review.user.username}}</a>
         <div class="text-muted">{{user_review.date}}  <a href= "{% url 'delete_review' recipe.RecipeId %}" class="text-muted"><i class="fa fa-times" style="font-size:15px; border:none; margin-left:3px; "></i></a></div>
       </div>
       <div class="card-body">
@@ -241,7 +243,7 @@
     <div class="card" id="reviews">
 
       <div class="card-header d-flex justify-content-between">
-        <div class="text-muted"> {{review.user.username}}</div>
+        <a class="text-muted" href="{% url 'other_profile_info' review.user.username %}"> {{review.user.username}} </a>
         <div class="text-muted">{{review.date}}</div>
       </div>
       <div class="card-body">
@@ -280,7 +282,7 @@
   {% for review in reviews%}
   <div class="card" id="reviews">
     <div class="card-header d-flex justify-content-between">
-      <div class="text-muted"> {{review.AuthorName}}</div>
+      <a class="text-muted link-secondary" href="{% url 'other_profile_info' review.AuthorName %}"> {{review.AuthorName}}</a>
       <div class="text-muted">{{review.DateSubmitted}}</div>
     </div>
     <div class="card-body">

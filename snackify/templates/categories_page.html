@@ -3,18 +3,88 @@
 {% block content %}
 
 <div class ="main">
+
+    <div class="">
+        <!-- <br> -->
+        <hr>
+        <center><h2>Categories</h2>
+        <hr>
+        <br>
+    </div>
+
+    <hr>
+        <form action="" method="post">
+            {% csrf_token%}
+            <div class="input-group mb-3 d-flex justify-content-center" id="cat">
+                <!-- <div class=" input-group mb-3 offset-lg-5"> -->
+                    <div class="form-floating" style="width:30rem">
+                        <input class=" form-control" list="categ" name="categ" id="catego">
+                        <label for="catego">Search a category from the list:</label>
+                    
+                        <!-- <button type="submit" class="btn btn-outline-secondary input-group-append" value="submit">
+                            Search
+                        </button> -->
+                    </div>
+                <!-- </div> -->
+            </div>
+
+            
+            
+        </form>
+    
+    <hr>
+    <br>
+    
+    <datalist id="categ">
+        {% if categories.any %}
+            {% for i in categories%}
+                <option value="{{i}}">{{i}}</option>
+            {% endfor%}
+        {% endif %}
+    </datalist>
+
+
     <div class="card-deck">
-      {% if categories.any %}
-        {% for i in categories%}
-        <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
-            <div class="card" id="res">
-                <div class="card-body">
-                    <a class="card-text" href = "{% url 'category_recipes' i %}" id="link">{{i}}</a>
+        {% if categories.any %}
+            {% for i in categories%}
+            <div class="col-2 pb-4">
+                <div class="card btn btn-secondary" style="height:5rem" id="res">
+                    <div class="card-body">
+                        <a class="link-dark stretched-link" href = "{% url 'category_recipes' i %}" id="link">{{i}}</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endfor%}
+            {% endfor%}
         {% endif %}
     </div>
 </div>
+
+<nav aria-label="Page navigation example">
+    {% if category.has_other_pages %}
+      <ul class="pagination justify-content-center">
+        {% if category.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ category.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+        {% for i in page_range %}
+          {% if category.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <!-- <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li> -->
+            {% if i == category.paginator.ELLIPSIS %}
+                  <li class="page-item"><span class="page-link">{{ i }}</span></li>
+              {% else %}
+                  <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+          {% endif %}
+        {% endfor %}
+        {% if category.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ category.next_page_number }}">&raquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </nav>
 {% endblock content %}

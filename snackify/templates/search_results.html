@@ -3,12 +3,24 @@
 {% block content %}
 
 
-<div class="">
+{% if search_request != 'None' %}  
+  <div class="">
     <br>
     <br>
-
+    <hr>
+    <center><h2>Results for: {{search_request}} </h2>
+    <hr>
     <br>
-
+  </div>
+  {% else %}
+  <div class="">
+    <br>
+    <br>
+    <hr>
+    <br>
+  </div>
+  
+  {% endif %}
     {% if message %}
     <div class="card-deck">
         {% if recipes_name %}  
