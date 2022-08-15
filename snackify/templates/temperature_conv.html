@@ -1,0 +1,134 @@
+{% extends 'header.html' %}
+
+  {% block title %} Snackify | Temperature Converter {% endblock title %}
+
+      {% block content %}
+
+
+
+  <div class="">
+    <br>
+    <br>
+    <hr>
+    <center><h2> Temperature Converter </h2>
+    <hr>
+    <br>
+  </div>
+
+  <div class="container d-flex justify-content-center">
+    <div class="col-6">
+      <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">Fahrenheit (°F)</th>
+              <th scope="col">Celsius (°C)</th>
+              <th scope="col">Gas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>220</td>
+              <td>100</td>
+              <td>1/4</td>
+            </tr>
+            <tr>
+              <td>225</td>
+              <td>110</td>
+              <td>1/4</td>
+            </tr>
+            <tr>
+              <td>250</td>
+              <td>120</td>
+              <td>1/2</td>
+            </tr>
+            <tr>
+              <td>275</td>
+              <td>130</td>
+              <td>1/2</td>
+            </tr>
+            <tr>
+              <td>300</td>
+              <td>140</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>320</td>
+              <td>150</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>340</td>
+              <td>160</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>350</td>
+              <td>170</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>375</td>
+              <td>180</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>400</td>
+              <td>190</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>410</td>
+              <td>200</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>425</td>
+              <td>210</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>265</td>
+              <td>220</td>
+              <td>7</td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+    
+    <div class="col-6">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Temperature Instruction</th>
+            <th scope="col">Oven with fan (°C)</th>
+            <th scope="col">Oven without fan (°C)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Low</td>
+            <td>150-175</td>
+            <td>130-155</td>
+          </tr>
+          <tr>
+            <td>Medium</td>
+            <td>175-200</td>
+            <td>155-180</td>
+          </tr>
+          <tr>
+            <td>Medium-High</td>
+            <td>200-225</td>
+            <td>180-205</td>
+          </tr>
+          <tr>
+            <td>High</td>
+            <td>225-250</td>
+            <td>205-230</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+
+{% endblock %}

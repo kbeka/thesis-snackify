@@ -1,0 +1,131 @@
+.hero-img {
+    overflow-x: hidden;
+    height: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.card #left {
+    background-color: rgba(0, 0, 0, 1);
+}
+
+/* .card #right {
+    width: 550px;
+} */
+
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+    background-color:black;
+}
+.custom-checkbox .custom-control-input:checked~.custom-control-label::after{
+    background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='red' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E");
+}
+
+.containers {
+    position: absolute;
+    /* top: 40px; */
+    /* right:35px; */
+    /* width:33%; */
+    height:450px;
+    border-radius: 8px;
+    border-width: 3px;
+    border-color: black;
+}
+
+.card #res{
+    height: auto;
+    width: auto;
+}
+
+#reviews {  
+    width: 1300px;
+    margin-top: 25px;
+}
+
+#not{
+    position: absolute;
+    z-index: 2;
+    left: 73.5rem;
+    top: 90.2rem;
+}
+
+#info {
+    height: 35rem; 
+    width: 50rem;
+}
+
+
+.carousel-item {
+    width: 450px;
+    max-width: 450px;
+    height: 450px;
+    max-height: 450px;
+    float: right;
+    border-radius: 8px;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* $red: #ff3252; */
+
+/* body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+} */
+
+.like-button {
+  display: inline-block;
+  position: relative;
+  font-size: 10px;
+  cursor: pointer;
+  /* border: 1px solid black; */
+}
+
+.like-button ::before {
+    font-size: 3em;
+    color: #000;
+    content: '♥';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .like-button ::after {
+    font-size: 3em;
+    color: #ff3252;
+    content: '♥';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.2s;
+  }
+
+  .like-button .liked::after {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  #heart {
+    background-color: transparent;
+    /* border-color: transparent; */
+}
+
+.card-deck {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+h2.search_result {
+    text-align: center;
+  }

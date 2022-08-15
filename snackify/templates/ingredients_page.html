@@ -1,0 +1,129 @@
+{% extends 'header.html' %}
+{% block title %} Snackify | Search by Ingredients {% endblock title %}
+{% block content %}
+
+
+<div class="hero-image">
+    <div class="hero-text">
+      <h1 class="text-center" style="font-size:50px">Search by Ingredients! &nbsp;&nbsp;</h1>
+      <form class="form-inline my-2 my-lg-0 d-flex justify-content-center" action="{% url 'ingredient_recipes' 'ingredientslist'%}" method="get">
+        <input name="ingredients" type="search" placeholder="Search..." />
+        <button class="btn btn-outline-success" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+      </form>
+    </div>
+</div>
+
+<!--Pasta Recipes-->
+<div class="">
+  <br>
+  <hr>
+  <center><h2><a class="link-dark" href= "{% url 'ingredient_recipes' ingr1 %}">Recipes with {{ingr1}}</a></h2>
+  <hr>
+  <br>
+</div>
+
+<div class="card-deck" style="z-index:0;">
+    {% for i in pasta %}
+    <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+      <div class="card" style="height: 25rem">
+        <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+        <div class="card-body">
+            <h5 class="card-title">{{i.Name}}</h5>
+            <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+            <hr>
+            <p class="card-text text-truncate">{{i.Description}}</p>
+            
+            <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+            <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+        </div>
+      </div>
+    </div>
+      {% endfor %}        
+</div>
+
+<!--Chicken Recipes-->
+<div class="">
+  <br>
+  <hr>
+  <center><h2><a class="link-dark" href= "{% url 'ingredient_recipes' ingr2 %}">Recipes with {{ingr2}}</a></h2>
+  <hr>
+  <br>
+</div>
+
+<div class="card-deck" style="z-index:0;">
+    {% for i in chicken %}
+    <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+      <div class="card" style="height: 25rem">
+        <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+        <div class="card-body">
+            <h5 class="card-title">{{i.Name}}</h5>
+            <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+            <hr>
+            <p class="card-text text-truncate">{{i.Description}}</p>
+            
+            <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+            <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+        </div>
+      </div>
+    </div>
+      {% endfor %}        
+</div>
+
+<!--Dough Recipes-->
+<div class="">
+  <br>
+  <hr>
+  <center><h2><a class="link-dark" href= "{% url 'ingredient_recipes' ingr3 %}">Recipes with {{ingr3}}</a></h2>
+  <hr>
+  <br>
+</div>
+
+<div class="card-deck" style="z-index:0;">
+    {% for i in dough %}
+    <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+      <div class="card" style="height: 25rem">
+        <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+        <div class="card-body">
+            <h5 class="card-title">{{i.Name}}</h5>
+            <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+            <hr>
+            <p class="card-text text-truncate">{{i.Description}}</p>
+            
+            <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+            <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+        </div>
+      </div>
+    </div>
+      {% endfor %}        
+</div>
+
+
+<!--Chocolate Recipes-->
+<div class="">
+  <br>
+  <hr>
+  <center><h2><a class="link-dark" href= "{% url 'ingredient_recipes' ingr4 %}">Recipes with {{ingr4}}</a></h2>
+  <hr>
+  <br>
+</div>
+
+<div class="card-deck" style="z-index:0;">
+    {% for i in chocolate %}
+    <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+      <div class="card" style="height: 25rem">
+        <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+        <div class="card-body">
+            <h5 class="card-title">{{i.Name}}</h5>
+            <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+            <hr>
+            <p class="card-text text-truncate">{{i.Description}}</p>
+            
+            <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+            <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+        </div>
+      </div>
+    </div>
+      {% endfor %}        
+</div>
+
+{% endblock content%}

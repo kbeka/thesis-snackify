@@ -1,0 +1,104 @@
+{% load static %}
+<!--Navbar-->
+  
+<div class="wrapper container-fluid">
+  <nav class="navbar fixed-top navbar-light justify-content-between">
+    
+    <button type="button" id="sidebarCollapse" class="btn btn-info" onclick="openCloseNav()">
+      <i class="fa fa-bars"></i>
+    </button>
+    <span class="navbar-text">
+              
+    </span>
+
+    <a href="{% url 'home' %}" class="navbar-brand">  <img src="{% static 'icon.png' %}" style="height:40px; width:40px; border:none;" alt="CoolBrand"> Snackify</a>
+    <!-- <a href="{% url 'home' %}" class="navbar-brand">
+      <img src="{% static 'logor.png' %}" height="2px" alt="CoolBrand">
+    </a> -->
+  
+
+    
+
+    <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method='get'>
+      <input class="form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search"  name='search'>
+      <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  
+
+  </nav>
+</div>
+<div class="main">
+  <div id="mySidenav" class="sidenav" style="position:fixed;">
+    <a href="{% url 'home' %}">Snackify</a>
+    <a href="{% url 'nutrition_page' %}">Nutrition</a>
+    <a href="{% url 'recipes' %}">Recipes for you</a>
+    <button class="dropdown-btn">Categories 
+      <i class="fa fa-angle-down"></i>
+    </button>
+    <div class="dropdown-container">
+      <a href="{% url 'category_recipes' 'Dessert'%}">Dessert</a>
+      <a href="{% url 'category_recipes' 'Breakfast'%}">Breakfast</a>
+      <a href="{% url 'category_recipes' 'Lunch/Snacks'%}">Lunch/Snacks</a>
+      <a href="{% url 'categories_page'%}">More...</a>
+    </div>
+    <button class="dropdown-btn">Ingredients 
+      <i class="fa fa-angle-down"></i>
+    </button>
+    <div class="dropdown-container">
+      <a href="{% url 'ingredient_recipes' 'chicken'%}">Chicken</a>
+      <a href="{% url 'ingredient_recipes' 'chocolate'%}">Chocolate</a>
+      <a href="{% url 'ingredient_recipes' 'potatoes'%}">Potatoes</a>
+      <a href="{% url 'ingredients_page'%}">More...</a>
+    </div>
+    <a href="{% url 'about_us' %}">About Us</a>
+    <a href="{% url 'profile_info' user.username %}">Profile</a>
+    <button class="dropdown-btn">Useful 
+      <i class="fa fa-angle-down"></i>
+    </button>
+    <div class="dropdown-container">
+      <a href="{% url 'volume_conv'%}">Volume Converter</a>
+      <a href="{% url 'length_conv'%}">Length Converter</a>
+      <a href="{% url 'temperature_conv'%}">Temperature Converter</a>
+    </div>
+    <a href="{% url 'login' %}">Logout</a>
+  </div>
+</div>
+
+
+  <script>
+    /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+    
+    for (i = 0; i < dropdown.length; i++) {
+      dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("actv");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+          dropdownContent.style.display = "none";
+        } else {
+          dropdownContent.style.display = "block";
+        }
+      });
+    }
+  </script>
+
+  <script>
+    function openCloseNav() {
+      var element = document.getElementById("mySidenav");
+      if (element.style.width == "250px") {
+        element.style.width = "0px";
+      } else {
+        element.style.width = "250px";
+      } 
+    }
+  </script>
+
+  <script>
+    document.addEventListener('mouseup', function(e) {
+      var container = document.getElementById('mySidenav');
+      if (!container.contains(e.target)) {
+          container.style.width = "0px";
+      }
+    });
+  </script>

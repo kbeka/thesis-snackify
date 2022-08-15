@@ -1,0 +1,188 @@
+{% extends 'header.html' %}
+
+{% block title %}
+Snackify | {{user_prof.first_name}}'s Profile
+{% endblock title %}
+
+    {% block content %}
+
+        {% load static %}
+<!-- <div class ="main"> -->
+
+  <!-- <div class="hero-img"
+    <div class="card-deck">
+      <div class="col-3">
+        <div class="card" id="left">
+          <img src="/static/{{ user_prof.image }}" class="d-block" style="height:16rem; width:11rem" alt="{{user_prof.user.username}}">
+        </div>
+      </div>
+
+      <div class="col-2">
+
+      </div>
+
+      <div class="col-6">
+        <div class="card" id="right">
+          <div class="card-header d-flex justify-content-between ">
+            <div class="text-muted"> <i class="fa-solid fa-user"></i> Username: <i>{{user_prof.user.username}}</i></div>
+            <div class="text-muted"> Name: <i>{{user_prof.user.first_name}} {{user_prof.user.last_name}}</i> </div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">
+              
+            {% if user_prof.birthday%}
+              <div class="card-text text-muted" style="font-size:15px">Birthday: <i>{{user_prof.birthday}}</i></div>
+            {% else %}
+              <div class="card-text text-muted" style="font-size:15px"> Birthday: <i>-</i></div>
+            {% endif %}
+            <hr>
+            {% if user_prof.city%}
+              <div class="card-text text-muted" style="font-size:15px">City: <i>{{user_prof.city}}</i></div>
+            {% else %}
+              <div class="card-text text-muted" style="font-size:15px">City: <i>-</i></div>
+            {% endif %}
+          
+            <div class="text-muted  d-flex justify-content-end">
+              <a href= "{% url 'edit_profile' user.username%}" class="btn btn-outline-secondary">Edit Profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="">
+    <br>
+    <br>
+    <hr>
+    <center><h2>My Profile</h2>
+    <hr>
+    <br>
+  </div>
+
+  <div class="card-deck">
+    {% if user_prof %}
+    <div class="col-4 pb-4">
+      <div class="card" id="res">
+        <div class="card-body">
+          <img src="/static/{{ user_prof.image }}" class="d-block rounded float-right" alt="{{user_prof.user.username}}">
+            <h5 class="card-title">{{user_prof.first_name}} {{user_prof.last_name}}</h5>
+            <p class="card-text text-muted" style="font-size:15px"><i>{{user_prof.user.username}}</i></p>
+            
+            {% if user_prof.birthday%}
+              <div class="card-text text-muted" style="font-size:15px">Birthday: <i>{{user_prof.birthday}}</i></div>
+            {% else %}
+              <div class="card-text text-muted" style="font-size:15px"> Birthday: <i>-</i></div>
+            {% endif %}
+            
+            {% if user_prof.city%}
+              <div class="card-text text-muted" style="font-size:15px">City: <i>{{user_prof.city}}</i></div>
+            {% else %}
+              <div class="card-text text-muted" style="font-size:15px">City: <i>-</i></div>
+            {% endif %}
+            <br>
+            <div class="">
+              <a href= "{% url 'edit_profile' user.username%}" class="btn btn-outline-secondary">Edit Profile</a>
+            </div>
+        </div>
+      </div>
+    </div>
+      
+    <div class="col-4 pb-4">
+      {% if user_cookbook%}
+      <div class="card" id="res">
+        <div class="card-header">
+          <h5><a href= "{% url 'cookbook' user.username%}" class="link-dark">{{user_prof.first_name}}'s Cookbook</a><small style="font-size:13px;"> (Click for more...)</small></h5>
+        </div>
+        
+        <div class="card-body">
+          {% for i in user_cookbook%}
+          <div class="card lnk" id="res">
+          <img src="{{ i.Images }}" class="d-block rounded float-left card-img-top"  style="width: 100%; height: 8rem; object-fit: cover;" alt="{{i.Name}}">
+          <!-- <div class="card-img-overlay"> -->
+            <a class="" href="{% url 'recipe_page' i.RecipeId %}">{{i.Name}}</a>
+            <p class="card-text text-muted" style="font-size:15px"><i> - by {{i.AuthorName}}</i></p>
+          <!-- </div> -->
+        </div>
+        <br>
+            {%endfor%}
+      </div>
+      </div>
+      {% else %}
+      <div class="card" id="res">
+        <div class="card-header">
+          <div class="text-muted lnk"> You haven't added any recipes to your cookbook yet. </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-4 pb-4">
+      {% if user_favorite%}
+      <div class="card" id="res">
+        <div class="card-header">
+          <h5><a href= "{% url 'favorite' user.username%}" class="link-dark">{{user_prof.first_name}}'s Favorite Recipes</a><small style="font-size:13px;"> (Click for more...)</small></h5>
+        </div>
+
+        <div class="card-body">
+          {% for i in user_favorite%}
+          <div class="card lnk" id="res">
+          <img src="{{ i.Images }}" class="d-block rounded float-left"  style="width: 100%; height: 8rem; object-fit: cover;" alt="{{i.Name}}">
+            <a class="" href="{% url 'recipe_page' i.RecipeId %}">{{i.Name}}</a>
+            <p class="card-text text-muted" style="font-size:15px"><i>{{i.AuthorName}}</i></p>
+          </div>
+          <br>
+            {%endfor%}
+        </div>
+      </div>
+      {% else %}
+      <div class="card" id="res">
+        <div class="card-header">
+          <div class="text-muted lnk"> You haven't added any recipes to your favorites yet. </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="">
+    <br>
+    <hr>
+    <center><h2>{{user_prof.first_name}}'s Reviews</h2>
+    <hr>
+    <br>
+  </div>
+  
+  <div class="">
+  
+    {% if user_review %}
+    {% for i in user_review %}
+      <div class="card" id="reviews">
+        <div class="card-header d-flex justify-content-between">
+          <div class="text-muted lnk"> - for <i><a class="" target="_blank" href="{% url 'recipe_page' i.RecipeId_id %}">{{i.RecipeId.Name}} </a></i></div>
+          <div class="text-muted">{{i.date}}</div>
+        </div>
+        <div class="card-body">
+          <blockquote class="">
+            <p>{{i.review}}</p>
+            <footer class="blockquote-footer">{{i.rating}}/5 <i class="fa fa-star"></i></footer>
+          </blockquote>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+        <div class="card" id="reviews">
+          <div class="card-header d-flex justify-content-between">
+            <div class="text-muted lnk"> You haven't reviewed any recipes yet. </div>
+            <!-- <div class="text-muted">{{i.date}}</div> -->
+          </div>
+        </div>
+      {% endif %}
+    </div>
+<!-- </div> -->
+
+
+
+
+    {% endblock %}

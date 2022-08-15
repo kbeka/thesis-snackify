@@ -1,0 +1,26 @@
+.lnk a{
+    color: grey;
+    text-decoration: none;
+}
+
+.lnk a:hover {
+    text-decoration: underline;
+    color: grey;
+    text-decoration-color: grey;
+    background-color: transparent;
+    text-decoration-style: double;
+}
+
+#edit {
+    background-color: white;
+    margin-top: 65px;
+    margin-bottom: 15px;
+}
+
+/* #prof {
+    padding-right: 225px;
+} */
+
+#reviews {
+    margin-bottom: 15px;
+}

@@ -1,0 +1,48 @@
+{% extends 'header.html' %}
+{% block title %} Snackify | About Us {% endblock title %}
+
+    {% block content %}
+
+        {% load static %}
+        <div class="main">
+        <center><h1><u><b>Meet The Team!</b></u></h1>
+
+        <div class="column">
+            <div class="card">
+            <center><img src="{% static 'alkisti.jpg' %}"alt="Alkisti" width="50%" height="30%" class="image2">
+            <div class="container">
+                <h2>Evangelia-Alkistis Lemonaki</h2>
+                <p class="title">Undergraduate Student</p>
+                <p>Department of Electrical & Computer Engineering @UTH, 23 years old from Volos.</p>
+                <span class='underline'>
+                <a  href="https://github.com/alemonaki" target="_blank" ><i class="fa fa-github"></i><b style="color:black">Github</b></a>
+            </span>
+                <p>Email: <b>elemonaki@uth.gr</b></p>
+                <span class='underline'>
+                <p><a href="mailto:elemonaki@uth.gr"><button class="button">Contact</button></a></p>
+                </span>
+            </div>
+            </div>
+        </div>
+        
+        <div class="column">
+            <div class="card">
+            <center><img src="{% static 'cleo.jpg' %}" class="image2" alt="Cleopatra" width="50%" height="25%" style="padding-bottom: 7px">
+            <div class="container">
+                <br>
+                <h2 style="padding-bottom: 7px">Cleopatra Beka</h2>
+                <p class="title">Undergraduate Student</p>
+                <p>Department of Electrical & Computer Engineering @UTH, 25 years old from Preveza.</p>
+                <span class='underline'>
+                <a  href="https://github.com/kbeka" target="_blank" ><i class="fa fa-github"></i><b style="color:black">Github</b></a>
+            </span>
+                <p>Email: <b>kbeka@uth.gr</b></p>
+                <span class='   underline'>
+                <p><a href="mailto:kbeka@uth.gr"><button class="button">Contact</button></a></p>
+                </span>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+        {% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'header.html' %}
+
+  {% block title %} Snackify | Similar Recipes {% endblock title %}
+
+      {% block content %}
+
+        {% if message %}
+
+          {% if recipes %}
+            <div class="">
+              <br>
+              <br>
+              <hr>
+              {% for i in recipes %}
+
+                {% if forloop.counter <= 1 %}
+                  
+                  {% if recipe != 'None'%}
+                    <center><h2> Find similar recipes for: '{{recipe}}' ({{num_of_recipes}}) </h2>
+                  {% endif %}
+
+                {% endif %}
+
+              {% endfor %}
+              <hr>
+              <br>
+            </div>
+          {% endif %}
+
+            <div class="card-deck">
+                {% if recipes %}  
+                  {% for i in recipes %}
+                  <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+                    <div class="card" style="height: 25rem">
+                      <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+                      <div class="card-body">
+                          <h5 class="card-title">{{i.Name}}</h5>
+                          <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+                          <hr>
+                          <p class="card-text text-truncate">{{i.Description}}</p>
+                          
+                          <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+                          <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+                      </div>
+                    </div>
+                    <br><hr>
+                  </div>
+                  {% endfor %}
+                {% endif %}          
+              </div>
+
+        {% else %}
+          
+          <div class="">
+            <br>
+            <br>
+            <hr>
+            <center><h2>Sorry, there are no similar recipes for: ' {{recipe}} ' </h2>
+            <hr>
+            <br>
+          </div>
+
+        {% endif%}
+
+        <nav aria-label="Page navigation example">
+          {% if recipes.has_other_pages %}
+            <ul class="pagination justify-content-center">
+              {% if recipes.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ recipes.previous_page_number }}" method="get">&laquo;</a></li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+              {% endif %}
+              {% for i in page_range %}
+                {% if recipes.number == i %}
+                  <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                  <!-- <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li> -->
+                  {% if i == recipes.paginator.ELLIPSIS %}
+                        <li class="page-item"><span class="page-link">{{ i }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endif %}
+              {% endfor %}
+              {% if recipes.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ recipes.next_page_number }}">&raquo;</a></li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+              {% endif %}
+            </ul>
+          {% endif %}
+        </nav>
+
+{% endblock content%}

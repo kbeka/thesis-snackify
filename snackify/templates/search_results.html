@@ -1,0 +1,49 @@
+{% extends 'header.html' %}
+{% block title %} Snackify | Search by Ingredients {% endblock title %}
+{% block content %}
+
+
+{% if search_request != 'None' %}  
+  <div class="">
+    <br>
+    <br>
+    <hr>
+    <center><h2>Results for: {{search_request}} </h2>
+    <hr>
+    <br>
+  </div>
+  {% else %}
+  <div class="">
+    <br>
+    <br>
+    <hr>
+    <br>
+  </div>
+  
+  {% endif %}
+    {% if message %}
+    <div class="card-deck">
+        {% if recipes_name %}  
+        {% for i in recipes_name %}
+        <div class="col-sm-12 col-md-6 col-lg-3 pb-4">
+        <div class="card" style="height: 30rem">
+            <img src= "{{i.Images}}" class="card-img-top" style= "width: 100%; height: 12vw; object-fit: cover;" alt="{{i.Name}}">
+            <div class="card-body">
+                <h5 class="card-title">{{i.Name}}</h5>
+                <p class="card-text text-muted" style="font-size:12px">{{i.RecipeCategory}}</p>
+                <hr>
+                <p class="card-text text-truncate">{{i.Description}}</p>
+                
+                <p class="card-text text-truncate" id="rate">Rating: {{i.AggregatedRating}} / 5 <i class="fa fa-star text-muted"></i> ({{i.NumofRatings}})</p>
+                <a href= "{% url 'recipe_page' i.RecipeId %}" class="btn btn-outline-secondary" id="home-btn">More...</a>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+        {% endif %}       
+    </div>
+    {% else %}
+    <h2 class = "search_result"> Sorry, no results for this search!</h2>
+    {% endif %}
+</div>
+{% endblock content%}
