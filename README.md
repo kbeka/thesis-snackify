@@ -24,3 +24,11 @@ The Snackify website consists of the following parts:
   - length converter
   - volume converter
   - temperature converter
+
+## Recommendation Systems
+For this project, we implemented 3 distinct systems and 1 combining them:
+
+* Content-Based System I using *correlation*
+* Content-Based System II using *similarity*
+* Collaborative-Filtering System
+* Hybrid System combininng Content-Based System II & Collaborative-Filtering
